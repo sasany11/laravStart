@@ -18,12 +18,15 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Type</th>
-                                <th>Modify</th>
-                            <tr>
-                                <td>657</td>
-                                <td>Bob Doe</td>
-                                <td>11-7-2014</td>
-                                <td><span class="label label-primary">Approved</span></td>
+                                <th>RegisterAt</th>
+                                <th>Modify</th></tr>
+
+                            <tr v-for="user in users" :key="user.id">
+                                <td>{{user.id}}</td>
+                                <td>{{user.name}}</td>
+                                <td>{{user.email}}</td>
+                                <td>{{user.type}}</td>
+                                <td>{{user.created_at | myDate}}</td>
                                 <td>
                                     <a><i class="fa fa-edit blue"></i> </a>
                                     |
@@ -92,7 +95,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Create</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
                     </div>
                     </form>
                 </div>
@@ -102,9 +105,11 @@
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
         data () {
             return {
+                users:{},
                 // Create a new form instance
                 form: new Form({
                     name: '',
@@ -117,12 +122,30 @@
             }
         },
         methods:{
+            loadUsers(){
+                axios.get("api/user").then(({data})=>(this.users=data.data));
+
+            },
             createUser(){
-                this.form.post('api/user')
+                this.$Progress.start();
+                this.form.post('api/user');
+                Fire.$emit('afterCreated');
+
+                $('#addNew').modal('hide');
+
+                Toast.fire({
+                    type: 'success',
+                    title: 'Signed in successfully'
+                })
+
+                this.$Progress.finish();
             }
         },
-        mounted() {
-            console.log('Component mounted.')
+        created() {
+           this.loadUsers();
+           Fire.$on('afterCreated',() => {
+               this.loadUsers();
+           })
         }
     }
 </script>
