@@ -7,7 +7,7 @@
                         <h3 class="box-title">System Users</h3>
 
                         <div class="box-tools">
-                            <button class="btn btn-success float-right" data-toggle="modal" data-target="#addNew">Add User <i class="fa fa-user-plus fa-fw"></i></button>
+                            <button class="btn btn-success float-right" @click="newModal()">Add User <i class="fa fa-user-plus fa-fw"></i></button>
                         </div>
                     </div>
                     <!-- /.box-header -->
@@ -28,9 +28,9 @@
                                 <td>{{user.type}}</td>
                                 <td>{{user.created_at | myDate}}</td>
                                 <td>
-                                    <a><i class="fa fa-edit blue"></i> </a>
+                                    <a href="#" @click="editModal(user)"><i class="fa fa-edit blue"></i> </a>
                                     |
-                                    <a><i class="fa fa-trash red"></i> </a>
+                                    <a href="#" @click="deleteUser(user.id)"><i class="fa fa-trash red"></i> </a>
                                 </td>
                             </tr>
 
@@ -46,12 +46,13 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Add New</h5>
+                        <h5 class="modal-title" v-show="!editMode" id="ModalLabel">Add New</h5>
+                        <h5 class="modal-title" v-show="editMode" id="exampleModalLabel">Update User's Info</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form @submit.prevent="createUser">
+                    <form @submit.prevent="editMode ? updateUser() : createUser()">
                     <div class="modal-body">
 
                         <div class="form-group">
@@ -86,7 +87,7 @@
                         </div>
 
                         <div class="form-group">
-                            <input v-model="form.password" type="password" name="password" placeholder="Email address"
+                            <input v-model="form.password" type="password" name="password" placeholder="password"
                                    class="form-control" :class="{ 'is-invalid': form.errors.has('password') }">
                             <has-error :form="form" field="password"></has-error>
                         </div>
@@ -95,7 +96,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="submit" v-show="editMode" class="btn btn-success">Update</button>
+                        <button type="submit" v-show="!editMode" class="btn btn-primary">Create</button>
                     </div>
                     </form>
                 </div>
@@ -109,6 +111,7 @@
     export default {
         data () {
             return {
+                editMode:true,
                 users:{},
                 // Create a new form instance
                 form: new Form({
@@ -122,28 +125,74 @@
             }
         },
         methods:{
+            updateUser(){
+                console.log("ediiiit");
+            },
+            newModal(){
+                this.editMode=false;
+                this.form.reset();
+                $('#addNew').modal('show');
+            },
+            editModal(user){
+               this.editMode=true;
+                this.form.reset();
+                $('#addNew').modal('show');
+                this.form.fill(user);
+            },
+            deleteUser(id){
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                        // send request to server
+                        this.form.delete('api/user/'+id).then(()=>{
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            )
+                                Fire.$emit('afterChange');
+                        }).catch(() =>{
+                            swal('failed!' , 'There are Someting wrong' ,'Warning');
+                            }
+
+                        );
+
+
+
+                    }
+                })
+            },
             loadUsers(){
                 axios.get("api/user").then(({data})=>(this.users=data.data));
 
             },
             createUser(){
                 this.$Progress.start();
-                this.form.post('api/user');
-                Fire.$emit('afterCreated');
+                this.form.post('api/user')
+                    .then(() =>{
+                        Fire.$emit('afterChange');
 
-                $('#addNew').modal('hide');
+                        $('#addNew').modal('hide');
 
-                Toast.fire({
-                    type: 'success',
-                    title: 'Signed in successfully'
-                })
+                        Toast.fire({
+                            type: 'success',
+                            title: 'Signed in successfully'
+                        })
 
-                this.$Progress.finish();
+                        this.$Progress.finish();
+                    });
             }
         },
         created() {
            this.loadUsers();
-           Fire.$on('afterCreated',() => {
+           Fire.$on('afterChange',() => {
                this.loadUsers();
            })
         }
