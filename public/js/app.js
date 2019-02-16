@@ -1997,6 +1997,7 @@ __webpack_require__.r(__webpack_exports__);
       users: {},
       // Create a new form instance
       form: new Form({
+        id: '',
         name: '',
         email: '',
         password: '',
@@ -2008,7 +2009,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     updateUser: function updateUser() {
-      console.log("ediiiit");
+      var _this = this;
+
+      this.$Progress.start();
+      this.form.put('api/user/' + this.form.id).then(function () {
+        Swal.fire('Updated!', 'Information has been updated.', 'success');
+        Fire.$emit('refreshTable');
+
+        _this.$Progress.finish();
+
+        $('#addNew').modal('hide');
+      }).catch(function () {
+        _this.$Progress.fail();
+      });
     },
     newModal: function newModal() {
       this.editMode = false;
@@ -2022,7 +2035,7 @@ __webpack_require__.r(__webpack_exports__);
       this.form.fill(user);
     },
     deleteUser: function deleteUser(id) {
-      var _this = this;
+      var _this2 = this;
 
       Swal.fire({
         title: 'Are you sure?',
@@ -2035,9 +2048,9 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (result) {
         if (result.value) {
           // send request to server
-          _this.form.delete('api/user/' + id).then(function () {
+          _this2.form.delete('api/user/' + id).then(function () {
             Swal.fire('Deleted!', 'Your file has been deleted.', 'success');
-            Fire.$emit('afterChange');
+            Fire.$emit('refreshTable');
           }).catch(function () {
             swal('failed!', 'There are Someting wrong', 'Warning');
           });
@@ -2045,35 +2058,35 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     loadUsers: function loadUsers() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get("api/user").then(function (_ref) {
         var data = _ref.data;
-        return _this2.users = data.data;
+        return _this3.users = data.data;
       });
     },
     createUser: function createUser() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.$Progress.start();
       this.form.post('api/user').then(function () {
-        Fire.$emit('afterChange');
+        Fire.$emit('refreshTable');
         $('#addNew').modal('hide');
         Toast.fire({
           type: 'success',
           title: 'Signed in successfully'
         });
 
-        _this3.$Progress.finish();
+        _this4.$Progress.finish();
       });
     }
   },
   created: function created() {
-    var _this4 = this;
+    var _this5 = this;
 
     this.loadUsers();
-    Fire.$on('afterChange', function () {
-      _this4.loadUsers();
+    Fire.$on('refreshTable', function () {
+      _this5.loadUsers();
     });
   }
 });

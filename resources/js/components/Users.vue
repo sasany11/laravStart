@@ -115,6 +115,7 @@
                 users:{},
                 // Create a new form instance
                 form: new Form({
+                    id: '',
                     name: '',
                     email: '',
                     password: '',
@@ -126,7 +127,21 @@
         },
         methods:{
             updateUser(){
-                console.log("ediiiit");
+                this.$Progress.start();
+                this.form.put('api/user/'+this.form.id)
+                    .then(() => {
+                        Swal.fire(
+                            'Updated!',
+                            'Information has been updated.',
+                            'success'
+                        )
+                        Fire.$emit('refreshTable');
+                        this.$Progress.finish();
+                        $('#addNew').modal('hide');
+                    })
+                    .catch(() => {
+                        this.$Progress.fail();
+                    });
             },
             newModal(){
                 this.editMode=false;
@@ -157,7 +172,7 @@
                                 'Your file has been deleted.',
                                 'success'
                             )
-                                Fire.$emit('afterChange');
+                                Fire.$emit('refreshTable');
                         }).catch(() =>{
                             swal('failed!' , 'There are Someting wrong' ,'Warning');
                             }
@@ -177,7 +192,7 @@
                 this.$Progress.start();
                 this.form.post('api/user')
                     .then(() =>{
-                        Fire.$emit('afterChange');
+                        Fire.$emit('refreshTable');
 
                         $('#addNew').modal('hide');
 
@@ -192,7 +207,7 @@
         },
         created() {
            this.loadUsers();
-           Fire.$on('afterChange',() => {
+           Fire.$on('refreshTable',() => {
                this.loadUsers();
            })
         }
