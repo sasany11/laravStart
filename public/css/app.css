@@ -8599,7 +8599,7 @@ body,
   .main-footer,
   .main-header {
     transition: margin-left 0.3s ease-in-out;
-    margin-left: 250px;
+    margin-right: 250px;
     z-index: 3000;
   }
 }
@@ -8641,7 +8641,7 @@ body,
 .main-sidebar {
   position: fixed;
   top: 0;
-  left: 0;
+  right: 0;
   bottom: 0;
 }
 
@@ -17411,7 +17411,7 @@ input[type=button].btn-block {
 .nav {
   display: flex;
   flex-wrap: wrap;
-  padding-left: 0;
+  padding-right: 0;
   margin-bottom: 0;
   list-style: none;
 }
@@ -29324,5 +29324,9 @@ readers do not read off random characters that represent icons */
 .router-link-exact-active {
   background-color: #3f9ae5;
   color: white !important;
+}
+
+aside {
+  float: right !important;
 }
 

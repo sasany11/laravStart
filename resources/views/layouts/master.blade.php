@@ -4,7 +4,7 @@
 This is a starter template page. Use this page to start your new project from
 scratch. This page gets rid of all links and provides the needed markup only.
 -->
-<html lang="en">
+<html dir="rtl" lang="fa">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,21 +25,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
             </li>
         </ul>
-
-        <!-- SEARCH FORM -->
-        <form class="form-inline ml-3">
-            <div class="input-group input-group-sm">
-                <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                    <button class="btn btn-navbar" type="submit">
-                        <i class="fa fa-search"></i>
-                    </button>
+            <form class="form-inline ml-3">
+                <div class="input-group input-group-sm">
+                    <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+                    <div class="input-group-append">
+                        <button class="btn btn-navbar" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </form>
-
-
+            </form>
     </nav>
+        <!-- SEARCH FORM -->
+
+
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
@@ -64,7 +63,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </div>
 
             <!-- Sidebar Menu -->
-            <nav class="mt-2">
+            <nav class="mt-2 float-right">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
@@ -72,7 +71,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <router-link to="/dashboard" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt blue"></i>
                             <p>
-                                Dashboard
+                                داشبورد
                             </p>
                         </router-link>
                     </li>
@@ -81,35 +80,36 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <a href="#" class="nav-link">
                             <i class="fas fa-cogs green"></i>
                             <p>
-                                Managment
-                                <i class="right fa fa-angle-left"></i>
+                                 مدیریت برنامه
+                                <i class="left fa fa-angle-double-left"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
                                 <router-link to="/users" class="nav-link">
                                     <i class="fas fa-users nav-icon green"></i>
-                                    <p>Users</p>
+                                    <p>کاربران</p>
                                 </router-link>
                             </li>
 
                         </ul>
                     </li>
+                    @can('isUser')
                     <li class="nav-item">
                         <router-link to="/profile" class="nav-link">
                             <i class="nav-icon fas fa-user orange"></i>
                             <p>
-                                Profile
-                                <span class="right badge badge-danger">New</span>
+                                پروفایل
                             </p>
                         </router-link>
                     </li>
+                    @endcan
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                             <i class="nav-icon fas fa-power-off red"></i>
-                            <p>{{ __('Logout') }}</p>
+                            <p>{{ __('خروج') }}</p>
                         </a>
 
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -139,7 +139,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Main Footer -->
     <footer class="main-footer">
         <!-- To the right -->
-        <div class="float-right d-none d-sm-inline">
+        <div class="float-left d-none d-sm-inline">
             Anything you want
         </div>
         <!-- Default to the left -->

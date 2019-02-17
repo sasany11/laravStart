@@ -198,7 +198,7 @@
 
                         Toast.fire({
                             type: 'success',
-                            title: 'Signed in successfully'
+                            title: 'Create a new User successfully'
                         })
 
                         this.$Progress.finish();
