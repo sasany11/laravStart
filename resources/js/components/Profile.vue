@@ -387,8 +387,8 @@
 
                 }else {
                     Swal.fire({
-                        title: 'Photo is big',
-                        text: "The photo size is bigger than 2 mega bytes!",
+                        title: 'خطا در اندازه تصویر',
+                        text: "حجم فایل انتخابی بیش از دو مگابایت است!",
                         type: 'warning',
                     })
                 }
@@ -401,7 +401,7 @@
                         Fire.$emit('refreshInfo');
                         Toast.fire({
                             type: 'success',
-                            title: 'Updated successfully'
+                            title: 'موفقیت در بروزرسانی'
                         })
                     })
                     .catch(() => {

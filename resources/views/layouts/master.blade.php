@@ -12,7 +12,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="csrf-token" content="{{csrf_token()}}">
     <title>AdminLTE 3 | Starter</title>
 
-<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/app-fars.css">
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper" id="app">
@@ -42,7 +42,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <aside class="main-sidebar sidebar-dark-primary elevation-4" style="min-height: 203px;text-align: right;direction: rtl;">
         <!-- Brand Logo -->
         <a href="index3.html" class="brand-link">
             <img src="./imgs/decision.png" alt="lara start" class="brand-image img-circle elevation-3"
@@ -63,7 +63,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </div>
 
             <!-- Sidebar Menu -->
-            <nav class="mt-2 float-right">
+            <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class
                          with font-awesome or any other icon font library -->
@@ -75,13 +75,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             </p>
                         </router-link>
                     </li>
-
+                    @can('isAdmin')
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
-                            <i class="fas fa-cogs green"></i>
+                            <i class="nav-icon fas fa-cogs green"></i>
                             <p>
                                  مدیریت برنامه
-                                <i class="left fa fa-angle-double-left"></i>
+                                <i class="left fa fa-angle-left"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
@@ -94,14 +94,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                         </ul>
                     </li>
+                    @endcan
                     @can('isUser')
+                        <li class="nav-item">
+                            <router-link to="/profile" class="nav-link">
+                                <i class="nav-icon fas fa-user orange"></i>
+                                <p>پروفایل</p>
+                            </router-link>
+                        </li>
+                    @endcan
+                    @can('isAdmin')
                     <li class="nav-item">
-                        <router-link to="/profile" class="nav-link">
-                            <i class="nav-icon fas fa-user orange"></i>
-                            <p>
-                                پروفایل
-                            </p>
-                        </router-link>
+                            <router-link to="/profile" class="nav-link">
+                                <i class="nav-icon fas fa-user orange"></i>
+                                <p>پروفایل</p>
+                            </router-link>
                     </li>
                     @endcan
                     <li class="nav-item">
@@ -127,7 +134,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Main content -->
-        <div class="content">
+        <div class="content" style="direction: rtl;text-align: right">
             <div class="container-fluid">
                 <router-view></router-view>
                 <vue-progress-bar></vue-progress-bar>
@@ -147,7 +154,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </footer>
 </div>
 <!-- ./wrapper -->
-
+@auth
+    <script>
+        window.user = @json(auth()->user())
+    </script>
+@endauth
 <script src="/js/app.js"></script>
 </body>
 </html>

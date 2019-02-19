@@ -1,25 +1,26 @@
 <template>
     <div class="container">
-        <div class="row mt-5">
+        <div v-if="$gate.isAdmin" class="row mt-5">
             <div class="col-md-12">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="box-title">System Users</h3>
+
 
                         <div class="box-tools">
-                            <button class="btn btn-success float-right" @click="newModal()">Add User <i class="fa fa-user-plus fa-fw"></i></button>
+                            <h3 class="box-title">کاربران سیستم</h3>
+                            <button class="btn btn-success float-left" @click="newModal()">اضافه کردن کاربر جدید <i class="fa fa-user-plus fa-fw"></i></button>
                         </div>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-hover">
                             <tbody><tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Type</th>
-                                <th>RegisterAt</th>
-                                <th>Modify</th></tr>
+                                <th>ردیف</th>
+                                <th>نام کاربر</th>
+                                <th>ایمیل</th>
+                                <th>نوع کاربر</th>
+                                <th>ثبت شده در</th>
+                                <th>ایجاد تغییرات</th></tr>
 
                             <tr v-for="user in users" :key="user.id">
                                 <td>{{user.id}}</td>
@@ -42,18 +43,19 @@
             </div>
         </div>
         <!-- Modal -->
-        <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+        style="direction: ltr;">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" v-show="!editMode" id="ModalLabel">Add New</h5>
-                        <h5 class="modal-title" v-show="editMode" id="exampleModalLabel">Update User's Info</h5>
+                        <h5 class="modal-title" v-show="!editMode" id="ModalLabel">اضافه کردن کاربر جدید</h5>
+                        <h5 class="modal-title" v-show="editMode" id="exampleModalLabel">بروزرسانی اطلاعات کاربر</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <form @submit.prevent="editMode ? updateUser() : createUser()">
-                    <div class="modal-body">
+                    <div class="modal-body" style="direction: rtl;">
 
                         <div class="form-group">
                             <input v-model="form.name" type="text" name="name" placeholder="Enter Your Name"
@@ -95,9 +97,9 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                        <button type="submit" v-show="editMode" class="btn btn-success">Update</button>
-                        <button type="submit" v-show="!editMode" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">انصراف</button>
+                        <button type="submit" v-show="editMode" class="btn btn-success">بروزرسانی</button>
+                        <button type="submit" v-show="!editMode" class="btn btn-primary">ایجاد کاربر</button>
                     </div>
                     </form>
                 </div>
@@ -131,8 +133,8 @@
                 this.form.put('api/user/'+this.form.id)
                     .then(() => {
                         Swal.fire(
-                            'Updated!',
-                            'Information has been updated.',
+                            'بروزرسانی شد!',
+                            'اطلاعات کاربر با موفقیت ذخیره گردید.',
                             'success'
                         )
                         Fire.$emit('refreshTable');
@@ -156,36 +158,36 @@
             },
             deleteUser(id){
                 Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
+                    title: 'آیا از حذف کاربر مطمئن هستید؟ ',
+                    text: "دیگر قادر به بازگردانی اطلاعات نخواهید بود!",
                     type: 'warning',
                     showCancelButton: true,
+                    cancelButtonText: 'انصراف',
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
+                    confirmButtonText: 'بله حذف شود!'
                 }).then((result) => {
                     if (result.value) {
                         // send request to server
                         this.form.delete('api/user/'+id).then(()=>{
                             Swal.fire(
-                                'Deleted!',
-                                'Your file has been deleted.',
+                                'حذف شد!',
+                                'حساب کاربری مورد نظر حذف گردید.',
                                 'success'
                             )
-                                Fire.$emit('refreshTable');
+                            //Fire.$emit('refreshTable');
                         }).catch(() =>{
-                            swal('failed!' , 'There are Someting wrong' ,'Warning');
+                            Swal.fire('ناموفق!' , 'عملیات با خطا مواجه گردید' ,'Warning');
                             }
-
                         );
-
-
-
                     }
                 })
             },
             loadUsers(){
-                axios.get("api/user").then(({data})=>(this.users=data.data));
+                if(this.$gate.isAdmin()){
+                    axios.get("api/user").then(({data})=>(this.users=data.data));
+                }
+
 
             },
             createUser(){
@@ -198,11 +200,13 @@
 
                         Toast.fire({
                             type: 'success',
-                            title: 'Create a new User successfully'
+                            title: 'کاربر جدید با موفقیت ایجاد شد'
                         })
 
                         this.$Progress.finish();
-                    });
+                    }).catch(() => {
+                       this.$Progress.fail();
+                });
             }
         },
         created() {

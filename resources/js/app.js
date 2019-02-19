@@ -32,6 +32,10 @@ const router = new VueRouter({
     routes // short for `routes: routes`
 })
 
+//use Gate as an authurize method in our coponents
+import Gate from './Gate';
+Vue.prototype.$gate=new Gate(window.user);
+
 import VueProgressBar from 'vue-progressbar'
 
 Vue.use(VueProgressBar, {
@@ -44,7 +48,7 @@ import Swal from 'sweetalert2';
 window.Swal=Swal;
 const Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: 'top-start',
     showConfirmButton: false,
     timer: 3000
 });
