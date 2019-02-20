@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div v-if="$gate.isAdmin" class="row mt-5">
+        <div v-if="$gate.isAdminOrAuthor()" class="row mt-5">
             <div class="col-md-12">
                 <div class="box">
                     <div class="box-header">
@@ -41,6 +41,10 @@
                 </div>
                 <!-- /.box -->
             </div>
+        </div>
+
+        <div v-if="!$gate.isAdminOrAuthor()">
+            <not-found></not-found>
         </div>
         <!-- Modal -->
         <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
@@ -184,7 +188,7 @@
                 })
             },
             loadUsers(){
-                if(this.$gate.isAdmin()){
+                if(this.$gate.isAdminOrAuthor()){
                     axios.get("api/user").then(({data})=>(this.users=data.data));
                 }
 
